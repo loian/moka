@@ -12,7 +12,7 @@ type Lexer struct {
 	ch           rune   //the curread read char
 }
 
-func (l *Lexer ) readChar() {
+func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
@@ -24,7 +24,7 @@ func (l *Lexer ) readChar() {
 }
 
 func (l *Lexer) consumeWhitespace() {
-	if unicode.IsSpace(l.ch) {
+	for unicode.IsSpace(l.ch) {
 		l.readChar()
 	}
 }
@@ -37,8 +37,6 @@ func (l *Lexer) readIdentifier() []rune {
 	return l.input[initialPosition:l.position]
 }
 
-
-
 func (l *Lexer) xreadNumber() []rune {
 	initialPosition := l.position
 	for unicode.IsDigit(l.ch) {
@@ -50,12 +48,12 @@ func (l *Lexer) xreadNumber() []rune {
 func (l *Lexer) readNumber() ([]rune, token.TokenType) {
 	initialPosition := l.position
 
-	var tokenType token.TokenType = token.VAL_INT;
+	var tokenType token.TokenType = token.VAL_INT
 
 	for unicode.IsNumber(l.ch) || l.ch == '.' {
 		l.readChar()
 
-		if (l.ch == '.') {
+		if l.ch == '.' {
 			if tokenType == token.VAL_FLOAT {
 				tokenType = token.ILLEGAL
 			} else {
@@ -63,7 +61,6 @@ func (l *Lexer) readNumber() ([]rune, token.TokenType) {
 			}
 		}
 	}
-
 
 	return l.input[initialPosition:l.position], tokenType
 
@@ -80,6 +77,18 @@ func (l *Lexer) NextToken() token.Token {
 		t = newToken(token.ASSIGN, l.ch)
 	case '+':
 		t = newToken(token.PLUS, l.ch)
+	case '-':
+		t = newToken(token.MINUS, l.ch)
+	case '!':
+		t = newToken(token.BANG, l.ch)
+	case '*':
+		t = newToken(token.ASTERISK, l.ch)
+	case '/':
+		t = newToken(token.SLASH, l.ch)
+	case '<':
+		t = newToken(token.LT, l.ch)
+	case '>':
+		t = newToken(token.GT, l.ch)
 	case ',':
 		t = newToken(token.COMMA, l.ch)
 	case ';':
@@ -104,7 +113,7 @@ func (l *Lexer) NextToken() token.Token {
 			t.Literal = string(l.readIdentifier())
 			t.Type = token.LookupIdentifier(t.Literal)
 			return t
-		} else if unicode.IsDigit(l.ch) || l.ch == '.'{
+		} else if unicode.IsDigit(l.ch) || l.ch == '.' {
 			runesLiteral, tokType := l.readNumber()
 			t.Literal = string(runesLiteral)
 			t.Type = tokType
@@ -118,16 +127,13 @@ func (l *Lexer) NextToken() token.Token {
 	return t
 }
 
-
-func newToken(tokenType token.TokenType, ch rune) token.Token{
+func newToken(tokenType token.TokenType, ch rune) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
 func NewLexer(code string) *Lexer {
-	input :=  []rune(code)
+	input := []rune(code)
 	l := &Lexer{input: input}
 	l.readChar()
 	return l
 }
-
-

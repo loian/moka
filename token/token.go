@@ -17,8 +17,14 @@ const (
 	//8
 	ASSIGN
 	PLUS
+	MINUS
+	BANG
+	ASTERISK
+	SLASH
 
-	//Delimiters
+	LT
+	GT
+
 	//10
 	COMMA
 	SEMICOLON
@@ -31,14 +37,19 @@ const (
 
 	//Keywords
 	//18
+	ELSE
 	FUNCTION
-	VAR
+	FALSE
+	IF
+	RETURN
+	TRUE
 	TYPE_BOOLEAN
 	TYPE_INT
 	TYPE_FLOAT
 	TYPE_DECIMAL
 	TYPE_STRING
 	TYPE_STRUCT
+	VAR
 )
 
 type TokenType uint8
@@ -48,17 +59,21 @@ type Token struct {
 	Literal string
 }
 
-var keywords = map[string] TokenType {
-	"fn": FUNCTION,
-	"var": VAR,
-	"bool":	TYPE_BOOLEAN,
-	"int":	TYPE_INT,
-	"float": TYPE_FLOAT,
+var keywords = map[string]TokenType{
+	"fn":      FUNCTION,
+	"var":     VAR,
+	"if":      IF,
+	"else":    ELSE,
+	"true":    TRUE,
+	"false":   FALSE,
+	"return":  RETURN,
+	"bool":    TYPE_BOOLEAN,
+	"int":     TYPE_INT,
+	"float":   TYPE_FLOAT,
 	"decimal": TYPE_DECIMAL,
-	"string": TYPE_STRING,
-	"struct": TYPE_STRUCT,
+	"string":  TYPE_STRING,
+	"struct":  TYPE_STRUCT,
 }
-
 
 func LookupIdentifier(i string) TokenType {
 	if tokenType, ok := keywords[i]; ok {

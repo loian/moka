@@ -5,33 +5,36 @@ import (
 	"testing"
 )
 
-func TestNextToken(t *testing.T) {
-	input := `+=(){},`
+func TestNextTokenSingleChars(t *testing.T) {
+	input := `var counter int = 5`
 
 	expectations := []token.Token{
 		{
-			token.PLUS,
-			"+",
+			Type: token.VAR,
+			Literal: "var",
 		},
 		{
-			token.ASSIGN,
-			"=",
+			Type: token.IDENTIFIER,
+			Literal: "counter",
 		},
 		{
-			token.LPAREN,
-			"(",
+			Type: token.TYPE_INT,
+			Literal: "int",
 		},
 		{
-			token.RPAREN,
-			")",
+			Type: token.ASSIGN,
+			Literal: "=",
 		},
-		{token.LBRACE,
-			"{",
+		{
+			Type: token.VAL_INT,
+			Literal: "5",
 		},
-		{token.RBRACE,
-			"}",
+		{
+			Type: token.SEMICOLON,
+			Literal: ";",
 		},
 	}
+
 
 	l := NewLexer(input)
 
@@ -49,4 +52,8 @@ func TestNextToken(t *testing.T) {
 		}
 
 	}
+
+}
+
+func TestNextToken(t *testing.T) {
 }

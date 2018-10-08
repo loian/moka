@@ -9,12 +9,7 @@ func TestNext(t *testing.T) {
 	input := `var counter int = 5; var j,i float = 5.4, 3;
 			  var add = fn(x int, y int) {
 					return x+y;
-              }
-			  if (5<6) {
-					return true;
-			  else {
-					return false;
-			  }`
+              }`
 
 	expectations := []token.Token{
 		{Type: token.VAR, Literal: "var"},
@@ -71,6 +66,15 @@ func TestNext(t *testing.T) {
 
 }
 
+func TestConsumeWhiteSpaces(t *testing.T) {
+	input := " \t\n12345"; //one space, a tab, a new line
+	l := NewLexer(input)
+	l.consumeWhitespace()
+	if l.position != 3 {
+		t.Fatalf("test consumeWhitespace - should have consumed two characters and position should be 3 insted of %q", l.position);
+	}
+}
+
 func TestReadNumberInt(t *testing.T) {
 	input := "12345"
 	l := NewLexer(input)
@@ -104,5 +108,23 @@ func TestReadNumberIllegal(t *testing.T) {
 	}
 	if string(tok) != input {
 		t.Fatalf("test ReadNumberIllegal - wrokng literal %q, received %q", input, tok)
+	}
+}
+
+func TestPeekChar(t *testing.T) {
+	input := "12345";
+	l := NewLexer(input);
+
+	if (l.peekChar() != '2') {
+		t.Fatalf("PeekChar should have returned 2")
+	}
+}
+
+func TestPeekCharOverflow(t *testing.T) {
+	input := "";
+	l := NewLexer(input);
+
+	if (l.peekChar() != 0) {
+		t.Fatalf("PeekChar should have returned an empty rune")
 	}
 }

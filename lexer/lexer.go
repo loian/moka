@@ -66,6 +66,13 @@ func (l *Lexer) readNumber() ([]rune, token.TokenType) {
 
 }
 
+func (l *Lexer) peekChar() rune {
+	if l.position < len(l.input) {
+		return l.input[l.position+1]
+	}
+	return 0
+}
+
 func (l *Lexer) NextToken() token.Token {
 
 	var t token.Token

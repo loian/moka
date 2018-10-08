@@ -5,6 +5,7 @@ const (
 	EOF
 
 	// Literals and identifiers
+	// 2
 	IDENTIFIER
 	BOOLEAN
 	VAL_INT
@@ -13,10 +14,12 @@ const (
 	VAL_STRING
 
 	//Operator
+	//8
 	ASSIGN
 	PLUS
 
 	//Delimiters
+	//10
 	COMMA
 	SEMICOLON
 	LPAREN
@@ -27,6 +30,7 @@ const (
 	RBRACE
 
 	//Keywords
+	//18
 	FUNCTION
 	VAR
 	TYPE_BOOLEAN
@@ -47,6 +51,12 @@ type Token struct {
 var keywords = map[string] TokenType {
 	"fn": FUNCTION,
 	"var": VAR,
+	"bool":	TYPE_BOOLEAN,
+	"int":	TYPE_INT,
+	"float": TYPE_FLOAT,
+	"decimal": TYPE_DECIMAL,
+	"string": TYPE_STRING,
+	"struct": TYPE_STRUCT,
 }
 
 

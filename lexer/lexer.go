@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"moka/token"
 	"unicode"
 )
@@ -35,11 +34,38 @@ func (l *Lexer) readIdentifier() []rune {
 	for unicode.IsLetter(l.ch) {
 		l.readChar()
 	}
-
 	return l.input[initialPosition:l.position]
 }
 
-func (l *Lexer) readNumber() []rune {
+
+
+func (l *Lexer) xreadNumber() []rune {
+	initialPosition := l.position
+	for unicode.IsDigit(l.ch) {
+		l.readChar()
+	}
+	return l.input[initialPosition:l.position]
+}
+
+func (l *Lexer) readNumber() ([]rune, token.TokenType) {
+	initialPosition := l.position
+
+	var tokenType token.TokenType = token.VAL_INT;
+
+	for unicode.IsNumber(l.ch) || l.ch == '.' {
+		l.readChar()
+
+		if (l.ch == '.') {
+			if tokenType == token.VAL_FLOAT {
+				tokenType = token.ILLEGAL
+			} else {
+				tokenType = token.VAL_FLOAT
+			}
+		}
+	}
+
+
+	return l.input[initialPosition:l.position], tokenType
 
 }
 
@@ -74,14 +100,15 @@ func (l *Lexer) NextToken() token.Token {
 		t = token.Token{Type: token.EOF, Literal: ""}
 
 	default:
-		fmt.Println(l.ch)
 		if unicode.IsLetter(l.ch) {
 			t.Literal = string(l.readIdentifier())
 			t.Type = token.LookupIdentifier(t.Literal)
 			return t
-		} else if unicode.IsDigit(l.ch) {
-			t.Literal = string(l.readNumber())
-			t.Type = token.TYPE_INT
+		} else if unicode.IsDigit(l.ch) || l.ch == '.'{
+			runesLiteral, tokType := l.readNumber()
+			t.Literal = string(runesLiteral)
+			t.Type = tokType
+			return t
 		} else {
 			t = newToken(token.ILLEGAL, l.ch)
 		}

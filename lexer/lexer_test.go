@@ -6,10 +6,15 @@ import (
 )
 
 func TestNext(t *testing.T) {
-	input := `var counter int = 5; var j,i float = 5.4, 3;
+	input := `var counter int = 5;
+			  var j,i float = 5.4, 3;
 			  var add = fn(x int, y int) {
 					return x+y;
-              }`
+              }
+			  10 == 10;
+			  10 != 11;
+			  `
+
 
 	expectations := []token.Token{
 		{Type: token.VAR, Literal: "var"},
@@ -18,6 +23,7 @@ func TestNext(t *testing.T) {
 		{Type: token.ASSIGN, Literal: "="},
 		{Type: token.VAL_INT, Literal: "5"},
 		{Type: token.SEMICOLON, Literal: ";"},
+
 		{Type: token.VAR, Literal: "var"},
 		{Type: token.IDENTIFIER, Literal: "j"},
 		{Type: token.COMMA, Literal: ","},
@@ -28,6 +34,7 @@ func TestNext(t *testing.T) {
 		{Type: token.COMMA, Literal: ","},
 		{Type: token.VAL_INT, Literal: "3"},
 		{Type: token.SEMICOLON, Literal: ";"},
+
 		{Type: token.VAR, Literal: "var"},
 		{Type: token.IDENTIFIER, Literal: "add"},
 		{Type: token.ASSIGN, Literal: "="},
@@ -46,6 +53,17 @@ func TestNext(t *testing.T) {
 		{Type: token.IDENTIFIER, Literal: "y"},
 		{Type: token.SEMICOLON, Literal: ";"},
 		{Type: token.RBRACE, Literal: "}"},
+
+		{Type: token.VAL_INT, Literal: "10"},
+		{Type: token.EQUAL, Literal: "="},
+		{Type: token.VAL_INT, Literal: "10"},
+		{Type: token.SEMICOLON, Literal: ";"},
+
+		{Type: token.VAL_INT, Literal: "10"},
+		{Type: token.NOT_EQUAL, Literal: "!="},
+		{Type: token.VAL_INT, Literal: "11"},
+		{Type: token.SEMICOLON, Literal: ";"},
+
 	}
 	l := NewLexer(input)
 

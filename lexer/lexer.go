@@ -37,14 +37,6 @@ func (l *Lexer) readIdentifier() []rune {
 	return l.input[initialPosition:l.position]
 }
 
-func (l *Lexer) xreadNumber() []rune {
-	initialPosition := l.position
-	for unicode.IsDigit(l.ch) {
-		l.readChar()
-	}
-	return l.input[initialPosition:l.position]
-}
-
 func (l *Lexer) readNumber() ([]rune, token.TokenType) {
 	initialPosition := l.position
 
@@ -63,31 +55,46 @@ func (l *Lexer) readNumber() ([]rune, token.TokenType) {
 	}
 
 	return l.input[initialPosition:l.position], tokenType
-
 }
 
 func (l *Lexer) peekChar() rune {
 	if l.position < len(l.input) {
-		return l.input[l.position+1]
+		return l.input[l.readPosition]
 	}
 	return 0
 }
 
-func (l *Lexer) NextToken() token.Token {
+func (l *Lexer) twoCharOperator(tokenType token.TokenType, nextChar rune, literal string) (token.Token, bool) {
+	if l.peekChar() == nextChar {
+		t := token.Token{tokenType, literal}
+		l.readChar() //consume the next char sine it is part of the == token
+		return t, true
+	}
+	return token.Token{0,""}, false
+}
 
+func (l *Lexer) NextToken() token.Token {
 	var t token.Token
 
 	l.consumeWhitespace()
 
 	switch l.ch {
 	case '=':
-		t = newToken(token.ASSIGN, l.ch)
+		var ok bool
+		if t, ok = l.twoCharOperator(token.EQUAL, '=', "=="); !ok {
+			t = newToken(token.ASSIGN, l.ch)
+		}
 	case '+':
 		t = newToken(token.PLUS, l.ch)
 	case '-':
 		t = newToken(token.MINUS, l.ch)
 	case '!':
-		t = newToken(token.BANG, l.ch)
+		var ok bool
+		if t, ok = l.twoCharOperator(token.NOT_EQUAL, '=', "!="); !ok {
+			t = newToken(token.BANG, l.ch)
+		}
+
+
 	case '*':
 		t = newToken(token.ASTERISK, l.ch)
 	case '/':

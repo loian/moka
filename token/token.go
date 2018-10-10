@@ -41,12 +41,12 @@ const (
 	IF
 	RETURN
 	TRUE
-	TYPE_BOOLEAN
-	TYPE_DECIMAL
-	TYPE_FLOAT
-	TYPE_INT
-	TYPE_STRING
-	TYPE_STRUCT
+	//TYPE_BOOLEAN
+	//TYPE_DECIMAL
+	//TYPE_FLOAT
+	//TYPE_INT
+	//TYPE_STRING
+	//TYPE_STRUCT
 	VAR
 )
 
@@ -89,12 +89,12 @@ var tokenTypeNames = map[TokenType]string {
 	IF :"IF",
 	RETURN :"RETURN",
 	TRUE :"TRUE",
-	TYPE_BOOLEAN :"TYPE_BOOLEAN",
-	TYPE_DECIMAL :"TYPE_DECIMAL",
-	TYPE_FLOAT :"TYPE_FLOAT",
-	TYPE_INT :"TYPE_INT",
-	TYPE_STRING :"TYPE_STRING",
-	TYPE_STRUCT :"TYPE_STRUCT",
+	//TYPE_BOOLEAN :"TYPE_BOOLEAN",
+	//TYPE_DECIMAL :"TYPE_DECIMAL",
+	//TYPE_FLOAT :"TYPE_FLOAT",
+	//TYPE_INT :"TYPE_INT",
+	//TYPE_STRING :"TYPE_STRING",
+	//TYPE_STRUCT :"TYPE_STRUCT",
 	VAR :"VAR",
 }
 
@@ -107,12 +107,12 @@ var keywords = map[string]TokenType{
 	"true":    TRUE,
 	"false":   FALSE,
 	"return":  RETURN,
-	"bool":    TYPE_BOOLEAN,
-	"int":     TYPE_INT,
-	"float":   TYPE_FLOAT,
-	"decimal": TYPE_DECIMAL,
-	"string":  TYPE_STRING,
-	"struct":  TYPE_STRUCT,
+	"bool":    IDENTIFIER,
+	"int":     IDENTIFIER,
+	"float":   IDENTIFIER,
+	"decimal": IDENTIFIER,
+	"string":  IDENTIFIER,
+	"struct":  IDENTIFIER,
 }
 
 func LookupIdentifier(i string) TokenType {

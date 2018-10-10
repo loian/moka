@@ -3,7 +3,6 @@ package ast
 
 type Node interface {
 	TokenLiteral() string
-	Token
 }
 
 type Statement interface {

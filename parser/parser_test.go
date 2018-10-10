@@ -1,9 +1,9 @@
 package parser
 
 import (
-	"testing"
-	"moka/lexer"
 	"moka/ast"
+	"moka/lexer"
+	"testing"
 )
 
 func TestVarStatement (t *testing.T) {
@@ -20,6 +20,7 @@ func TestVarStatement (t *testing.T) {
 
 	if program == nil {
 		t.Errorf("ParseProgram returned nil")
+		return
 	}
 
 	if len(program.Statements) != 3 {
@@ -33,7 +34,6 @@ func TestVarStatement (t *testing.T) {
 		{"x", "int"},
 		{"y", "int"},
 		{"foobar", "int"},
-
 	}
 
 	for i,tt := range tests {

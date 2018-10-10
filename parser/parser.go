@@ -11,10 +11,11 @@ type Parser struct {
 	l *lexer.Lexer
 	currentToken token.Token
 	peekToken token.Token
+	errors []string
 }
 
 func NewParser(l *lexer.Lexer) *Parser {
-	p:=&Parser{l: l}
+	p:=&Parser{l: l, errors: []string{}}
 
 	//avance the pointers to fill currentToken and peekToken
 	p.nextToken()
@@ -47,8 +48,6 @@ func (p *Parser) ParseProgram () *ast.Program{
 
 func (p *Parser) parseStatement() ast.Statement {
 
-
-
 	switch p.currentToken.Type {
 	case token.VAR:
 		return p.parseVarStatement()
@@ -68,7 +67,6 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 	stmt.Name = &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
 
 	if !p.expectPeek(token.IDENTIFIER) {
-		fmt.Println(p.currentToken)
 		return nil
 	}
 
@@ -85,11 +83,24 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 	return stmt
 }
 
+func (p *Parser) peekError(tokenType token.TokenType) {
+	msg := fmt.Sprintf(
+		"expected %s,  got %s instead",
+		token.LookupTokenTypeName(tokenType),
+		token.LookupTokenTypeName(p.peekToken.Type),
+	)
+
+	p.errors = append(p.errors, msg)
+
+}
+
 func (p *Parser) expectPeek(tokenType token.TokenType) bool {
 	if p.peekTokenIs(tokenType) {
 		p.nextToken()
 		return true
 	}
+
+	p.peekError(tokenType)
 	return false
 }
 
@@ -100,3 +111,8 @@ func (p *Parser) peekTokenIs(tokenType token.TokenType) bool {
 func (p *Parser) currentTokenIs(tokenType token.TokenType) bool {
 	return p.currentToken.Type == tokenType;
 }
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+

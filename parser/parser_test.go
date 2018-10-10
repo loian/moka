@@ -6,17 +6,36 @@ import (
 	"testing"
 )
 
+func TestVarStatementErrors (t *testing.T) {
+	input:=`
+		var x int 5;
+		var y  = 10;
+		var foobar int ;
+	`
+
+	l := lexer.NewLexer(input)
+	p := NewParser(l)
+
+	p.ParseProgram()
+
+	if len(p.Errors()) != 3 {
+		t.Errorf("expected 3 errors, got %d", len(p.Errors()))
+	}
+}
+
 func TestVarStatement (t *testing.T) {
 	input:=`
 		var x int = 5;
 		var y int = 10;
-		var foobar int = 833844;
+		var foobar int = 44;
 	`
 
 	l := lexer.NewLexer(input)
 	p := NewParser(l)
 
 	program := p.ParseProgram()
+
+	checkParserErrors(t, p)
 
 	if program == nil {
 		t.Errorf("ParseProgram returned nil")
@@ -68,3 +87,17 @@ func testVarStatement(t *testing.T, s ast.Statement, name string, typeident stri
 
 	return true
 }
+
+func checkParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+	if len(errors) == 0 {
+		return
+	}
+
+	t.Errorf("parser has %d errors", len(errors))
+	for _, msg := range errors {
+		t.Errorf("parser error: %q", msg)
+	}
+	t.FailNow()
+}
+

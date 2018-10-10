@@ -8,7 +8,7 @@ import (
 const CUSTOM_TYPE_BASE = 31
 
 var scopeId int64 = 0
-var customTypeId = int64(CUSTOM_TYPE_BASE)
+var customTypeId = DataType(CUSTOM_TYPE_BASE)
 var customTypeIdMutex = &sync.Mutex{}
 var scopeIdMutex= &sync.Mutex{}
 
@@ -19,7 +19,7 @@ var GlobalScope = &Scope{
 	Types: CustomTypeTable{},
 }
 
-type CustomTypeTable map[string] int64
+type CustomTypeTable map[string] DataType
 
 type SymbolTable map[string]int64
 
@@ -35,7 +35,7 @@ func (s *Scope) AddSymbol (symbolName string, symbolType int64) error {
 		s.Symbols[symbolName] = symbolType
 		return nil
 	}
-	return fmt.Errorf("symbol '%s' already defined", symbolName)
+	return fmt.Errorf("symbol '%s' is already defined in this scope", symbolName)
 }
 
 func (s *Scope) AddType(typeName string) error {
@@ -48,7 +48,7 @@ func (s *Scope) AddType(typeName string) error {
 		return nil
 	}
 
-	return fmt.Errorf("type '%s' already defined in this scope", typeName)
+	return fmt.Errorf("type '%s' is already defined in this scope", typeName)
 }
 
 func NewScope(parent *Scope) *Scope {

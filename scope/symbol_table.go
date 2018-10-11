@@ -10,27 +10,27 @@ const CUSTOM_TYPE_BASE = 31
 var scopeId int64 = 0
 var customTypeId = DataType(CUSTOM_TYPE_BASE)
 var customTypeIdMutex = &sync.Mutex{}
-var scopeIdMutex= &sync.Mutex{}
+var scopeIdMutex = &sync.Mutex{}
 
 var GlobalScope = &Scope{
-	Id: 0,
-	Parent: nil,
+	Id:      0,
+	Parent:  nil,
 	Symbols: SymbolTable{},
-	Types: CustomTypeTable{},
+	Types:   CustomTypeTable{},
 }
 
-type CustomTypeTable map[string] DataType
+type CustomTypeTable map[string]DataType
 
 type SymbolTable map[string]int64
 
 type Scope struct {
-	Id int64
-	Parent *Scope
+	Id      int64
+	Parent  *Scope
 	Symbols SymbolTable
-	Types CustomTypeTable
+	Types   CustomTypeTable
 }
 
-func (s *Scope) AddSymbol (symbolName string, symbolType int64) error {
+func (s *Scope) AddSymbol(symbolName string, symbolType int64) error {
 	if _, ok := s.Symbols[symbolName]; !ok {
 		s.Symbols[symbolName] = symbolType
 		return nil
@@ -57,11 +57,10 @@ func NewScope(parent *Scope) *Scope {
 	currentScopeId := scopeId
 	scopeIdMutex.Unlock()
 
-	return &Scope {
-		Id: currentScopeId,
-		Parent: parent,
+	return &Scope{
+		Id:      currentScopeId,
+		Parent:  parent,
 		Symbols: SymbolTable{},
-		Types: CustomTypeTable{},
+		Types:   CustomTypeTable{},
 	}
 }
-

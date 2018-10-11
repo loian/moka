@@ -15,7 +15,6 @@ func TestNext(t *testing.T) {
 			  10 != 11;
 			  `
 
-
 	expectations := []token.Token{
 		{Type: token.VAR, Literal: "var"},
 		{Type: token.IDENTIFIER, Literal: "counter"},
@@ -63,7 +62,6 @@ func TestNext(t *testing.T) {
 		{Type: token.NOT_EQUAL, Literal: "!="},
 		{Type: token.VAL_INT, Literal: "11"},
 		{Type: token.SEMICOLON, Literal: ";"},
-
 	}
 	l := NewLexer(input)
 
@@ -85,11 +83,11 @@ func TestNext(t *testing.T) {
 }
 
 func TestConsumeWhiteSpaces(t *testing.T) {
-	input := " \t\n12345"; //one space, a tab, a new line
+	input := " \t\n12345" //one space, a tab, a new line
 	l := NewLexer(input)
 	l.consumeWhitespace()
 	if l.position != 3 {
-		t.Fatalf("test consumeWhitespace - should have consumed two characters and position should be 3 insted of %q", l.position);
+		t.Fatalf("test consumeWhitespace - should have consumed two characters and position should be 3 insted of %q", l.position)
 	}
 }
 
@@ -130,19 +128,19 @@ func TestReadNumberIllegal(t *testing.T) {
 }
 
 func TestPeekChar(t *testing.T) {
-	input := "12345";
-	l := NewLexer(input);
+	input := "12345"
+	l := NewLexer(input)
 
-	if (l.peekChar() != '2') {
+	if l.peekChar() != '2' {
 		t.Fatalf("PeekChar should have returned 2")
 	}
 }
 
 func TestPeekCharOverflow(t *testing.T) {
-	input := "";
-	l := NewLexer(input);
+	input := ""
+	l := NewLexer(input)
 
-	if (l.peekChar() != 0) {
+	if l.peekChar() != 0 {
 		t.Fatalf("PeekChar should have returned an empty rune")
 	}
 }

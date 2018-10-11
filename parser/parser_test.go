@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-func TestVarStatementErrors (t *testing.T) {
-	input:=`
+func TestVarStatementErrors(t *testing.T) {
+	input := `
 		var x int 5;
 		var y  = 10;
 		var foobar int ;
@@ -23,8 +23,8 @@ func TestVarStatementErrors (t *testing.T) {
 	}
 }
 
-func TestVarStatement (t *testing.T) {
-	input:=`
+func TestVarStatement(t *testing.T) {
+	input := `
 		var x int = 5;
 		var y int = 10;
 		var foobar int = 44;
@@ -43,19 +43,19 @@ func TestVarStatement (t *testing.T) {
 	}
 
 	if len(program.Statements) != 3 {
-		t.Errorf("Wrong number of statements. They should be 3, got %d", len(program.Statements))
+		t.Errorf("wrong number of statements. They should be 3, got %d", len(program.Statements))
 	}
 
 	tests := []struct {
 		expectedIdentifier string
-		expectedType string
+		expectedType       string
 	}{
 		{"x", "int"},
 		{"y", "int"},
 		{"foobar", "int"},
 	}
 
-	for i,tt := range tests {
+	for i, tt := range tests {
 		stmt := program.Statements[i]
 		if !testVarStatement(t, stmt, tt.expectedIdentifier, tt.expectedType) {
 			return
@@ -101,3 +101,32 @@ func checkParserErrors(t *testing.T, p *Parser) {
 	t.FailNow()
 }
 
+func TestReturnStatements(t *testing.T) {
+	input := `return 5;
+			return 10;
+			return 912233`
+
+	l := lexer.NewLexer(input)
+	p := NewParser(l)
+
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 3 {
+		t.Errorf("wrong number of statements. They should be 3, got %d", len(program.Statements))
+	}
+
+	for _, stmt := range program.Statements {
+
+		returnStmt, ok := stmt.(*ast.ReturnStatement)
+
+		if !ok {
+			t.Errorf("stmt not a return statement, got %T", stmt)
+			continue
+		}
+
+		if returnStmt.TokenLiteral() != "return" {
+			t.Errorf("returmStmt.tokenLiteral not 'return', got '%s", returnStmt.TokenLiteral())
+		}
+	}
+}

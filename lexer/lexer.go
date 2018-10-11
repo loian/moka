@@ -70,7 +70,7 @@ func (l *Lexer) twoCharOperator(tokenType token.TokenType, nextChar rune, litera
 		l.readChar() //consume the next char sine it is part of the == token
 		return t, true
 	}
-	return token.Token{0,""}, false
+	return token.Token{0, ""}, false
 }
 
 func (l *Lexer) NextToken() token.Token {
@@ -93,7 +93,6 @@ func (l *Lexer) NextToken() token.Token {
 		if t, ok = l.twoCharOperator(token.NOT_EQUAL, '=', "!="); !ok {
 			t = newToken(token.BANG, l.ch)
 		}
-
 
 	case '*':
 		t = newToken(token.ASTERISK, l.ch)

@@ -8,14 +8,14 @@ import (
 )
 
 type Parser struct {
-	l *lexer.Lexer
+	l            *lexer.Lexer
 	currentToken token.Token
-	peekToken token.Token
-	errors []string
+	peekToken    token.Token
+	errors       []string
 }
 
 func NewParser(l *lexer.Lexer) *Parser {
-	p:=&Parser{l: l, errors: []string{}}
+	p := &Parser{l: l, errors: []string{}}
 
 	//avance the pointers to fill currentToken and peekToken
 	p.nextToken()
@@ -24,12 +24,12 @@ func NewParser(l *lexer.Lexer) *Parser {
 	return p
 }
 
-func (p *Parser) nextToken () {
+func (p *Parser) nextToken() {
 	p.currentToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
 
-func (p *Parser) ParseProgram () *ast.Program{
+func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 
@@ -51,6 +51,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.currentToken.Type {
 	case token.VAR:
 		return p.parseVarStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
@@ -105,14 +107,24 @@ func (p *Parser) expectPeek(tokenType token.TokenType) bool {
 }
 
 func (p *Parser) peekTokenIs(tokenType token.TokenType) bool {
-	return p.peekToken.Type == tokenType;
+	return p.peekToken.Type == tokenType
 }
 
 func (p *Parser) currentTokenIs(tokenType token.TokenType) bool {
-	return p.currentToken.Type == tokenType;
+	return p.currentToken.Type == tokenType
 }
 
 func (p *Parser) Errors() []string {
 	return p.errors
 }
 
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{Token: p.currentToken}
+	p.nextToken()
+
+	for !p.currentTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
+}

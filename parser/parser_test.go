@@ -104,7 +104,7 @@ func checkParserErrors(t *testing.T, p *Parser) {
 func TestReturnStatements(t *testing.T) {
 	input := `return 5;
 			return 10;
-			return 912233`
+			return 912233;`
 
 	l := lexer.NewLexer(input)
 	p := NewParser(l)

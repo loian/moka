@@ -3,7 +3,7 @@ package ast
 import "moka/token"
 
 type ExpressionStatement struct {
-	Token token.Token //The first token of the expression
+	Token      token.Token //The first token of the expression
 	Expression Expression
 }
 

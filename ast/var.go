@@ -18,11 +18,10 @@ func (vs *VarStatement) TokenLiteral() string {
 	return vs.Token.Literal
 }
 
-
 func (vs *VarStatement) String() string {
 	var out bytes.Buffer
 
-	out.WriteString((vs.TokenLiteral()+" "))
+	out.WriteString((vs.TokenLiteral() + " "))
 	out.WriteString(vs.Name.String() + " ")
 	out.WriteString(vs.Type.String())
 	out.WriteString(" = ")

@@ -5,6 +5,7 @@ import (
 	"moka/ast"
 	"moka/lexer"
 	"moka/token"
+	"strconv"
 )
 
 //operator precedence
@@ -41,6 +42,8 @@ func NewParser(l *lexer.Lexer) *Parser {
 	}
 
 	p.prefixParseFns[token.IDENTIFIER] = p.parseIdentifier
+	p.prefixParseFns[token.VAL_INT] = p.parseIntegerLiteral
+
 
 	//avance the pointers to fill currentToken and peekToken
 	p.nextToken()
@@ -187,4 +190,19 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 
 func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	intLiteral := &ast.IntegerLiteral{Token: p.currentToken}
+
+	val, err := strconv.ParseInt(p.currentToken.Literal, 0, 64)
+
+	if err != nil {
+		msg := fmt.Sprintf("can not parse %q as integer", p.currentToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+
+	intLiteral.Value = val
+	return intLiteral
 }

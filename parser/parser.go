@@ -44,7 +44,6 @@ func NewParser(l *lexer.Lexer) *Parser {
 	p.prefixParseFns[token.IDENTIFIER] = p.parseIdentifier
 	p.prefixParseFns[token.VAL_INT] = p.parseIntegerLiteral
 
-
 	//avance the pointers to fill currentToken and peekToken
 	p.nextToken()
 	p.nextToken()

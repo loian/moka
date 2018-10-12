@@ -169,10 +169,10 @@ func TestIdentifierExpression(t *testing.T) {
 func TestIntegerLiteralExpression(t *testing.T) {
 	input := "5;"
 
-	l:=lexer.NewLexer(input)
-	p:=NewParser(l)
+	l := lexer.NewLexer(input)
+	p := NewParser(l)
 
-	program:=p.ParseProgram()
+	program := p.ParseProgram()
 	checkParserErrors(t, p)
 
 	if len(program.Statements) != 1 {

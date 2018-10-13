@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"moka/ast"
 	"moka/lexer"
 	"testing"
@@ -10,7 +11,7 @@ func TestVarStatementErrors(t *testing.T) {
 	input := `
 		var x int 5;
 		var y  = 10;
-		var foobar int ;
+		var foobar int;
 	`
 
 	l := lexer.NewLexer(input)
@@ -18,8 +19,8 @@ func TestVarStatementErrors(t *testing.T) {
 
 	p.ParseProgram()
 
-	if len(p.Errors()) != 3 {
-		t.Errorf("expected 3 errors, got %d", len(p.Errors()))
+	if len(p.Errors()) <= 3 {
+		t.Errorf("expected at least 3 errors, got %d", len(p.Errors()))
 	}
 }
 
@@ -199,4 +200,74 @@ func TestIntegerLiteralExpression(t *testing.T) {
 		t.Fatalf("literal.TokenLiteral() not \"5\", got %q", literal.TokenLiteral())
 	}
 
+}
+
+func TestPrefixExpression(t *testing.T) {
+	testCases := []struct {
+		input    string
+		operator string
+		intValue int64
+	}{
+		{input: "!5", operator: "!", intValue: 5},
+		{input: "-15", operator: "-", intValue: 15},
+	}
+
+	for i, tc := range testCases {
+		l := lexer.NewLexer(tc.input)
+		p := NewParser(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("wrong number of statement in testCase[%d], expected 1, got %d", i, len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+		if !ok {
+			t.Fatalf(
+				"program.Statements[0] is not an *ast.ExpressionStatement in testCase[%d], got %T",
+				i,
+				stmt)
+		}
+
+		exp, ok := stmt.Expression.(*ast.PrefixExpression)
+
+		if !ok {
+			t.Fatalf(
+				"stmt.Expression is not an ast.Expression in testCase[%d], got %T",
+				i,
+				stmt.Expression)
+
+		}
+
+		if exp.Operator != tc.operator {
+			t.Fatalf("operator is not %q in testCases[%d], got %q", tc.operator, i, exp.Operator)
+		}
+
+		if !testIntegerLiteral(t, exp.Right, tc.intValue) {
+			return
+		}
+	}
+}
+
+func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
+	integ, ok := il.(*ast.IntegerLiteral)
+
+	if !ok {
+		t.Errorf("il not an integer literal, got %T", il)
+		return false
+	}
+
+	if integ.Value != value {
+		t.Errorf("integ.Value not %d, got %d", value, integ.Value)
+		return false
+	}
+
+	if integ.TokenLiteral() != fmt.Sprintf("%d", value) {
+		t.Errorf("integ.TokenLiteran() != %q", fmt.Sprintf("%d", value))
+		return false
+	}
+
+	return true
 }

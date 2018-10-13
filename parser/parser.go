@@ -10,7 +10,8 @@ import (
 
 //operator precedence
 const (
-	LOWEST = iota
+	_ int = iota
+	LOWEST
 	EQUALS
 	LESSGREATER
 	SUM
@@ -43,6 +44,8 @@ func NewParser(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns[token.IDENTIFIER] = p.parseIdentifier
 	p.prefixParseFns[token.VAL_INT] = p.parseIntegerLiteral
+	p.prefixParseFns[token.BANG] = p.parsePrefixExpression
+	p.prefixParseFns[token.MINUS] = p.parsePrefixExpression
 
 	//avance the pointers to fill currentToken and peekToken
 	p.nextToken()
@@ -105,6 +108,7 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 		return nil
 	}
 
+	//TODO: skipping expression until semicolon
 	for !p.currentTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
@@ -180,11 +184,17 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	prefix := p.prefixParseFns[p.currentToken.Type]
 
 	if prefix == nil {
+		p.noPrefixParseError(p.currentToken.Type)
 		return nil
 	}
 
 	leftExpression := prefix()
 	return leftExpression
+}
+
+func (p *Parser) noPrefixParseError(t token.TokenType) {
+	msg := fmt.Sprintf("no prefix parser function for %s found", token.LookupTokenTypeName(t))
+	p.errors = append(p.errors, msg)
 }
 
 func (p *Parser) parseIdentifier() ast.Expression {
@@ -204,4 +214,17 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 
 	intLiteral.Value = val
 	return intLiteral
+}
+
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	expression := &ast.PrefixExpression{
+		Token:    p.currentToken,
+		Operator: p.currentToken.Literal,
+	}
+
+	p.nextToken()
+
+	expression.Right = p.parseExpression(PREFIX)
+
+	return expression
 }
